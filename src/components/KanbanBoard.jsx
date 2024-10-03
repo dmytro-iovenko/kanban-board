@@ -1,4 +1,4 @@
-import { List } from "@mui/joy";
+import { List } from "@mui/material";
 import TaskList from "./TaskList";
 
 export default function Board({ tasks }) {

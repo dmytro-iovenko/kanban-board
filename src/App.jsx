@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import initialTasks from "./data/initialData";
 import KanbanBoard from "./components/KanbanBoard";
-import { Box } from "@mui/joy";
+import { Box } from "@mui/material";
 
 const App = () => {
   const [tasks, setTasks] = useState(initialTasks);
