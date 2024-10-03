@@ -8,7 +8,7 @@ const App = () => {
 
   return (
     <Box p={3}>
-      <KanbanBoard tasks={tasks} />
+      <KanbanBoard tasks={tasks} setTasks={setTasks} />
     </Box>
   );
 };
