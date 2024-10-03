@@ -1,7 +1,6 @@
 import React from "react";
 import TaskItem from "./TaskItem";
-import { Typography, Box } from "@mui/material";
-import { styled } from "@mui/system";
+import { Box, Divider, Sheet, Typography } from "@mui/joy";
 
 // export default function TaskList({ tasks }) {
 //   return (
@@ -13,27 +12,18 @@ import { styled } from "@mui/system";
 //   );
 // }
 
-const Column = styled(Box)(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  minWidth: 300,
-  backgroundColor: "#f4f5f7",
-  borderRadius: theme.shape.borderRadius,
-  padding: theme.spacing(2),
-  flex: 1,
-  mx: 1,
-}));
-
-export default function TaskList({ status = "TBD", tasks }) {
+export default function TaskList({ status, tasks }) {
   const title = `${status.charAt(0).toUpperCase() + status.slice(1)} (${tasks.length})`;
+
   return (
-    <Column>
+    <Sheet component="li" variant="outlined" sx={{ borderRadius: "sm", p: 2, listStyle: "none" }}>
       <Typography variant="h6">{title}</Typography>
-      <Box mt={2}>
+      <Divider component="div" sx={{ my: 2 }} />
+      <Box sx={{ mt: 2 }}>
         {tasks.map((task) => (
           <TaskItem key={task.id} task={task} />
         ))}
       </Box>
-    </Column>
+    </Sheet>
   );
 }
