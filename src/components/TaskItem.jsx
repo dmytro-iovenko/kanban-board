@@ -8,7 +8,7 @@ const UserAvatar = styled(Avatar)(({ theme }) => ({
   marginRight: theme.spacing(1),
 }));
 
-const TaskCard = styled(Box)(({ theme, type }) => ({
+const TaskCard = styled(Box)(({ theme, typeColor }) => ({
   backgroundColor: "#ffffff",
   borderRadius: theme.shape.borderRadius,
   padding: theme.spacing(2),
@@ -18,14 +18,28 @@ const TaskCard = styled(Box)(({ theme, type }) => ({
   "&:hover": {
     boxShadow: "0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)",
   },
-  borderLeft: `5px solid ${type === "bug" ? "#ff4d4f" : type === "feature" ? "#52c41a" : "#1890ff"}`,
+  borderLeft: `5px solid ${typeColor}`,
 }));
 
+const typeColors = {
+  bug: "#ff4d4f",
+  feature: "#52c41a",
+  default: "#1890ff",
+};
+
+const priorityColors = {
+  high: "error",
+  medium: "info",
+  low: "success",
+  default: "secondary",
+};
+
 export default function TaskItem({ task }) {
-  const priorityColor = task.priority === "high" ? "error" : task.priority === "low" ? "success" : "info";
+  const priorityColor = priorityColors[task.priority] || priorityColors.default;
+  const typeColor = typeColors[task.type] || typeColors.default;
 
   return (
-    <TaskCard type={task.type}>
+    <TaskCard typeColor={typeColor}>
       <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
         <Chip variant="outlined" color={priorityColor} size="small" label={task.priority} />
         <Typography variant="body2" color="textSecondary" align="right">
