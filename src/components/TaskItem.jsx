@@ -15,12 +15,12 @@ const priorityColors = {
   default: "secondary",
 };
 
-export default function TaskItem({ task }) {
+export default function TaskItem({ task, index }) {
   const priorityColor = priorityColors[task.priority] || priorityColors.default;
   const typeColor = typeColors[task.type] || typeColors.default;
 
   return (
-    <Draggable key={task.id} draggableId={task.id} index={task.index}>
+    <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided) => (
         <Box
           ref={provided.innerRef}

@@ -4,11 +4,17 @@ import KanbanBoard from "./components/KanbanBoard";
 import { Box } from "@mui/material";
 
 const App = () => {
-  const [tasks, setTasks] = useState(initialTasks);
+  const statuses = ["todo", "in-progress", "done"];
+  const groupedTasks = statuses.reduce((acc, status) => {
+    acc[status] = { status, tasks: initialTasks.filter((task) => task.status === status) };
+    return acc;
+  }, {});
+  console.log(groupedTasks);
+  const [tasks, setTasks] = useState(groupedTasks);
 
   return (
     <Box p={3}>
-      <KanbanBoard tasks={tasks} setTasks={setTasks} />
+      <KanbanBoard groupedTasks={tasks} setTasks={setTasks} />
     </Box>
   );
 };

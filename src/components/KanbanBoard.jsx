@@ -2,20 +2,20 @@ import { DragDropContext } from "@hello-pangea/dnd";
 import { List } from "@mui/material";
 import TaskList from "./TaskList";
 
-export default function Board({ tasks, setTasks }) {
-  const statuses = ["todo", "in-progress", "done"];
-  const groupedTasks = statuses.map((status) => ({
-    status,
-    tasks: tasks
-      .map((task, index) => {
-        task.index = index;
-        return task;
-      })
-      .filter((task) => task.status === status),
-  }));
+export default function Board({ groupedTasks, setTasks }) {
+  // const statuses = ["todo", "in-progress", "done"];
+  // const groupedTasks = statuses.map((status) => ({
+  //   status,
+  //   tasks: tasks
+  //     .map((task, index) => {
+  //       task.index = index;
+  //       return task;
+  //     })
+  //     .filter((task) => task.status === status),
+  // }));
 
   const onDragEnd = (result) => {
-    console.log("Drag End:", result, tasks);
+    console.log("Drag End:", result, groupedTasks);
 
     const { destination, source } = result;
 
@@ -28,18 +28,15 @@ export default function Board({ tasks, setTasks }) {
       return;
     }
 
-    const updatedTasks = Array.from(tasks);
-    console.log("updatedTasks:", updatedTasks);
-    const [movedTask] = updatedTasks.splice(source.index, 1);
-    console.log("movedTask:", movedTask, updatedTasks);
+    const updatedTasks = { ...groupedTasks };
+    const [movedTask] = updatedTasks[source.droppableId].tasks.splice(source.index, 1);
 
     // Change status if dropped in a different column
     movedTask.status = destination.droppableId;
 
     // Insert the task into the new position
-    updatedTasks.splice(destination.index, 0, movedTask);
+    updatedTasks[destination.droppableId].tasks.splice(destination.index, 0, movedTask);
 
-    // Update the tasks in state
     setTasks(updatedTasks);
   };
 
@@ -51,7 +48,7 @@ export default function Board({ tasks, setTasks }) {
           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
           gap: 2,
         }}>
-        {groupedTasks.map(({ status, tasks }) => (
+        {Object.values(groupedTasks).map(({ status, tasks }) => (
           <TaskList key={status} status={status} tasks={tasks} />
         ))}
       </List>
