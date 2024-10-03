@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import initialTasks from './data/initialData';
-import TaskList from './components/TaskList';
+import React, { useState } from "react";
+import initialTasks from "./data/initialData";
+import KanbanBoard from "./components/KanbanBoard";
+import { Box } from "@mui/joy";
 
 const App = () => {
   const [tasks, setTasks] = useState(initialTasks);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <TaskList tasks={tasks} setTasks={setTasks} />
-    </div>
+    <Box p={3}>
+      <KanbanBoard tasks={tasks} />
+    </Box>
   );
 };
 
