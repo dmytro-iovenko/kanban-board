@@ -6,7 +6,7 @@ export default function TaskList({ status, tasks }) {
   const title = `${status.charAt(0).toUpperCase() + status.slice(1)} (${tasks.length})`;
 
   return (
-    <Paper component="li" variant="outlined" sx={{ borderRadius: "sm", p: 2, listStyle: "none" }}>
+    <Paper component="li" variant="outlined" sx={{ borderRadius: 2, p: 2, listStyle: "none" }}>
       <Typography variant="h6">{title}</Typography>
       <Divider component="div" sx={{ my: 2 }} />
       <Box sx={{ mt: 2 }}>
