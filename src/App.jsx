@@ -9,9 +9,14 @@ const App = () => {
   const [statuses, setStatuses] = useState([]);
   const [tasks, setTasks] = useState([]);
 
+  // Function to create a delay
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
   useEffect(() => {
     let isMounted = true;
     (async () => {
+      // Micro-delay before fetch to prevent StrictMode to fetch twice
+      await delay(0);
       if (!isMounted) return;
 
       const initialTasks = await JiraAPI.getTasks("SBA320H");
@@ -20,7 +25,6 @@ const App = () => {
       const statuses = await JiraAPI.getStatuses();
       console.log("statuses:", statuses);
       setStatuses(statuses);
-
     })();
     return () => {
       isMounted = false;
