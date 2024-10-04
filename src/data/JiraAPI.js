@@ -16,7 +16,7 @@ export async function getTasks(projectKey) {
     headers,
   });
   const data = await response.json();
-  return data;
+  return (data && data.issues) || [];
 }
 
 // Returns a list of all statuses associated with active workflows

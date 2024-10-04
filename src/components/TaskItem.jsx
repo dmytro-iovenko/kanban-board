@@ -1,6 +1,7 @@
 import React from "react";
 import { Chip, Typography, Avatar, Box, Tooltip } from "@mui/material";
 import { Draggable } from "@hello-pangea/dnd";
+import * as taskItemHelper from "../helpers/taskItemHelper";
 
 const typeColors = {
   bug: "#ff4d4f",
@@ -18,7 +19,9 @@ const priorityColors = {
 export default function TaskItem({ task, index }) {
   const priorityColor = priorityColors[task.priority] || priorityColors.default;
   const typeColor = typeColors[task.type] || typeColors.default;
+  const description = taskItemHelper.parseJsonAndJoinParagraphs(task.fields.description);
 
+  console.log("task", task);
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided) => (
@@ -39,7 +42,7 @@ export default function TaskItem({ task, index }) {
             borderLeft: `5px solid ${typeColor}`,
           }}>
           <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-            <Chip variant="outlined" color={priorityColor} size="small" label={task.priority} />
+            <Chip variant="outlined" color={priorityColor} size="small" label={task.fields.priority.name} />
             <Typography variant="body2" color="textSecondary" align="right">
               {new Intl.DateTimeFormat("en-GB", {
                 day: "numeric",
@@ -48,23 +51,24 @@ export default function TaskItem({ task, index }) {
               }).format(new Date())}
             </Typography>
           </Box>
-          <Typography variant="subtitle1">{task.title}</Typography>
+          <Typography variant="subtitle1">{task.fields.summary}</Typography>
           <Typography variant="body2" gutterBottom>
-            {task.description}
+            {description}
           </Typography>
           <Box display="flex" alignItems="center">
-            <Tooltip title={task.assignee}>
+            <Tooltip title={task.fields.assignee.displayName}>
               <Avatar
+                alt={task.fields.assignee.displayName}
+                src={task.fields.assignee.avatarUrls["32x32"]}
                 sx={{
                   width: 32,
                   height: 32,
                   mr: 1,
                 }}>
-                {task.assignee[0]}
               </Avatar>
             </Tooltip>
             <Typography variant="body2" color="textSecondary">
-              {task.type} - {task.status}
+              {task.fields.issuetype.name} - {task.key}
             </Typography>
           </Box>
         </Box>

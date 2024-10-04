@@ -25,6 +25,13 @@ const App = () => {
       const statuses = await JiraAPI.getStatuses();
       console.log("statuses:", statuses);
       setStatuses(statuses);
+
+      const groupedTasks = statuses.reduce((acc, status) => {
+        acc[status.id] = { status: status.name, tasks: initialTasks.filter((task) => task.fields.status.id === status.id) };
+        return acc;
+      }, {});
+      console.log("groupedTasks:", groupedTasks);
+      setTasks(groupedTasks);
     })();
     return () => {
       isMounted = false;
