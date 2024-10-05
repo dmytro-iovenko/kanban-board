@@ -58,8 +58,8 @@ export default function Board({ groupedTasks, setTasks }) {
           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
           gap: 2,
         }}>
-        {groupedTasks.map(({ id, category, tasks }) => (
-          <TaskList key={id} id={id} category={category} tasks={tasks} />
+        {groupedTasks.map(({ id, category, tasks, colorName }) => (
+          <TaskList key={id} id={id} category={category} tasks={tasks} categoryColor={colorName} />
         ))}
       </List>
     </DragDropContext>

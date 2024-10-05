@@ -4,7 +4,7 @@ import { Draggable } from "@hello-pangea/dnd";
 import * as taskItemHelper from "../helpers/taskItemHelper";
 
 const typeColors = {
-  bug: "#ff4d4f",
+  "10000": "#ff4d4f", // Epic
   feature: "#52c41a",
   default: "#1890ff",
 };
