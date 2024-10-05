@@ -1,27 +1,42 @@
 import React from "react";
-import { Chip, Typography, Avatar, Box, Tooltip } from "@mui/material";
+import { Chip, Typography, Avatar, Box, Tooltip, Icon, Stack } from "@mui/material";
 import { Draggable } from "@hello-pangea/dnd";
 import * as taskItemHelper from "../helpers/taskItemHelper";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles({
+  imageIcon: { height: "100%" },
+  iconRoot: { textAlign: "center" },
+});
 
 const typeColors = {
-  "10000": "#ff4d4f", // Epic
+  10000: "#ff4d4f", // Epic
   feature: "#52c41a",
   default: "#1890ff",
 };
 
 const priorityColors = {
-  high: "error",
-  medium: "info",
-  low: "success",
-  default: "secondary",
+  highest: "##FF5A35",
+  high: "#FF5A35",
+  medium: "#FEAC12",
+  low: "#2664FE",
+  lowest: "#3683FE",
 };
 
 export default function TaskItem({ task, index }) {
-  const priorityColor = priorityColors[task.priority] || priorityColors.default;
+  const priorityColor = priorityColors[task.fields.priority.name.toLowerCase()];
+  const priorityIcon = task.fields.priority.iconUrl;
+  const typeIcon = task.fields.issuetype.iconUrl;
   const typeColor = typeColors[task.type] || typeColors.default;
   const description = taskItemHelper.parseJsonAndJoinParagraphs(task.fields.description);
+  const dueDate = task.fields.duedate
+    ? new Intl.DateTimeFormat("en-GB", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }).format(new Date(task.fields.duedate))
+    : "N/A";
 
-  // console.log("task", task);
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided) => (
@@ -41,36 +56,45 @@ export default function TaskItem({ task, index }) {
             },
             borderLeft: `5px solid ${typeColor}`,
           }}>
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={1}>
-            <Chip variant="outlined" color={priorityColor} size="small" label={task.fields.priority.name} />
-            <Typography variant="body2" color="textSecondary" align="right">
-              {new Intl.DateTimeFormat("en-GB", {
-                day: "numeric",
-                month: "short",
-                year: "numeric",
-              }).format(new Date())}
+          <Stack direction="row" spacing={1}>
+            <Chip size="small" variant="outlined" color="primary" label={task.key} sx={{ borderRadius: 1 }} />
+            <Chip
+              size="small"
+              variant="outlined"
+              label={task.fields.priority.name}
+              icon={
+                <Icon>
+                  <img src={priorityIcon} />
+                </Icon>
+              }
+              sx={{ borderRadius: 1, borderColor: priorityColor, backgroundColor: "transparent", color: priorityColor }}
+            />
+            <Typography variant="body2" color="textSecondary" align="right" sx={{ flex: 1 }}>
+              {dueDate}
             </Typography>
-          </Box>
-          <Typography variant="subtitle1">{task.fields.summary}</Typography>
+          </Stack>
+          <Stack direction="row" sx={{ mt: 1 }}>
+            <Icon>
+              <img src={typeIcon} />
+            </Icon>
+            <Typography variant="subtitle1">{task.fields.summary}</Typography>
+          </Stack>
           <Typography variant="body2" gutterBottom>
             {description}
           </Typography>
-          <Box display="flex" alignItems="center">
-            <Tooltip title={task.fields.assignee.displayName}>
-              <Avatar
-                alt={task.fields.assignee.displayName}
-                src={task.fields.assignee.avatarUrls["32x32"]}
-                sx={{
-                  width: 32,
-                  height: 32,
-                  mr: 1,
-                }}>
-              </Avatar>
-            </Tooltip>
+          <Stack direction="row" alignItems="center">
+            <Avatar
+              alt={task.fields.assignee.displayName}
+              src={task.fields.assignee.avatarUrls["32x32"]}
+              sx={{
+                width: 32,
+                height: 32,
+                mr: 1,
+              }}></Avatar>
             <Typography variant="body2" color="textSecondary">
-              {task.fields.issuetype.name} - {task.key}
+              {task.fields.assignee.displayName}
             </Typography>
-          </Box>
+          </Stack>
         </Box>
       )}
     </Draggable>
