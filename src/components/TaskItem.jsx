@@ -21,7 +21,7 @@ export default function TaskItem({ task, index }) {
   const typeColor = typeColors[task.type] || typeColors.default;
   const description = taskItemHelper.parseJsonAndJoinParagraphs(task.fields.description);
 
-  console.log("task", task);
+  // console.log("task", task);
   return (
     <Draggable key={task.id} draggableId={task.id} index={index}>
       {(provided) => (

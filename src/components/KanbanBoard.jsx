@@ -28,14 +28,24 @@ export default function Board({ groupedTasks, setTasks }) {
       return;
     }
 
-    const updatedTasks = { ...groupedTasks };
-    const [movedTask] = updatedTasks[source.droppableId].tasks.splice(source.index, 1);
+    // Create a deep copy of groupedTasks to avoid direct state mutation
+    const updatedTasks = groupedTasks.map(column => ({
+      ...column,
+      tasks: [...column.tasks]
+    }));
 
-    // Change status if dropped in a different column
-    movedTask.status = destination.droppableId;
+    // Find the source and destination columns
+    const sourceColumn = updatedTasks.find(col => col.id === source.droppableId);
+    const destinationColumn = updatedTasks.find(col => col.id === destination.droppableId);
 
-    // Insert the task into the new position
-    updatedTasks[destination.droppableId].tasks.splice(destination.index, 0, movedTask);
+    // Remove the task from the source column
+    const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
+
+    // Update the status of the moved task
+    movedTask.fields.status.statusCategory.id = destination.droppableId;
+
+    // Insert the task into the destination column
+    destinationColumn.tasks.splice(destination.index, 0, movedTask);
 
     setTasks(updatedTasks);
   };
@@ -48,8 +58,8 @@ export default function Board({ groupedTasks, setTasks }) {
           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
           gap: 2,
         }}>
-        {Object.values(groupedTasks).map(({ status, tasks }) => (
-          <TaskList key={status} status={status} tasks={tasks} />
+        {groupedTasks.map(({ id, category, tasks }) => (
+          <TaskList key={id} id={id} category={category} tasks={tasks} />
         ))}
       </List>
     </DragDropContext>

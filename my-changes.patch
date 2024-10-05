@@ -1,0 +1,108 @@
+diff --git a/src/App.jsx b/src/App.jsx
+index 4881ab5..e7aa626 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -32,16 +32,16 @@ const App = () => {
+       // group tasks into array with unique statusCategory data
+       const groupedTasks = Array.from(new Set(statuses.map((status) => status.statusCategory.id))).map((id) => {
+         const status = statuses.find((status) => status.statusCategory.id === id);
+-        return {
+-          id: status.statusCategory.id,
+-          status: status.statusCategory.name,
++        return ({
++          id: status.statusCategory.id.toString(),
++          category: status.statusCategory.name,
+           tasks: initialTasks.filter((task) => task.fields.status.statusCategory.id === status.statusCategory.id),
+-        };
++        });
+       });
+ 
+       // sort the status categories based on the defined order
+       groupedTasks.sort((a, b) => {
+-        return STATUS_CATEGORY_ORDER.indexOf(a.status) - STATUS_CATEGORY_ORDER.indexOf(b.status);
++        return STATUS_CATEGORY_ORDER.indexOf(a.category) - STATUS_CATEGORY_ORDER.indexOf(b.category);
+       });
+ 
+       console.log("groupedTasks:", groupedTasks);
+diff --git a/src/components/KanbanBoard.jsx b/src/components/KanbanBoard.jsx
+index 392e302..54d038f 100644
+--- a/src/components/KanbanBoard.jsx
++++ b/src/components/KanbanBoard.jsx
+@@ -28,14 +28,24 @@ export default function Board({ groupedTasks, setTasks }) {
+       return;
+     }
+ 
+-    const updatedTasks = { ...groupedTasks };
+-    const [movedTask] = updatedTasks[source.droppableId].tasks.splice(source.index, 1);
++    // Create a deep copy of groupedTasks to avoid direct state mutation
++    const updatedTasks = groupedTasks.map(column => ({
++      ...column,
++      tasks: [...column.tasks]
++    }));
+ 
+-    // Change status if dropped in a different column
+-    movedTask.status = destination.droppableId;
++    // Find the source and destination columns
++    const sourceColumn = updatedTasks.find(col => col.id === source.droppableId);
++    const destinationColumn = updatedTasks.find(col => col.id === destination.droppableId);
+ 
+-    // Insert the task into the new position
+-    updatedTasks[destination.droppableId].tasks.splice(destination.index, 0, movedTask);
++    // Remove the task from the source column
++    const [movedTask] = sourceColumn.tasks.splice(source.index, 1);
++
++    // Update the status of the moved task
++    movedTask.fields.status.statusCategory.id = destination.droppableId;
++
++    // Insert the task into the destination column
++    destinationColumn.tasks.splice(destination.index, 0, movedTask);
+ 
+     setTasks(updatedTasks);
+   };
+@@ -48,8 +58,8 @@ export default function Board({ groupedTasks, setTasks }) {
+           gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+           gap: 2,
+         }}>
+-        {Object.values(groupedTasks).map(({ status, tasks }) => (
+-          <TaskList key={status} status={status} tasks={tasks} />
++        {groupedTasks.map(({ id, category, tasks }) => (
++          <TaskList key={id} id={id} category={category} tasks={tasks} />
+         ))}
+       </List>
+     </DragDropContext>
+diff --git a/src/components/TaskItem.jsx b/src/components/TaskItem.jsx
+index 67fbce8..d2427fc 100644
+--- a/src/components/TaskItem.jsx
++++ b/src/components/TaskItem.jsx
+@@ -21,7 +21,7 @@ export default function TaskItem({ task, index }) {
+   const typeColor = typeColors[task.type] || typeColors.default;
+   const description = taskItemHelper.parseJsonAndJoinParagraphs(task.fields.description);
+ 
+-  console.log("task", task);
++  // console.log("task", task);
+   return (
+     <Draggable key={task.id} draggableId={task.id} index={index}>
+       {(provided) => (
+diff --git a/src/components/TaskList.jsx b/src/components/TaskList.jsx
+index a35d00d..5dd551a 100644
+--- a/src/components/TaskList.jsx
++++ b/src/components/TaskList.jsx
+@@ -3,15 +3,14 @@ import { Box, Divider, Paper, Typography } from "@mui/material";
+ import { Droppable } from "@hello-pangea/dnd";
+ import TaskItem from "./TaskItem";
+ 
+-export default function TaskList({ status, tasks }) {
+-  const title = `${status.charAt(0).toUpperCase() + status.slice(1)} (${tasks.length})`;
+-
++export default function TaskList({ id, category, tasks }) {
++  const title = `${category} (${tasks.length})`;
+   return (
+     <Paper component="li" variant="outlined" sx={{ borderRadius: 2, p: 2, listStyle: "none" }}>
+       <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+         <Typography variant="h6">{title}</Typography>
+         <Divider component="div" sx={{ my: 2 }} />
+-        <Droppable droppableId={status}>
++        <Droppable droppableId={id}>
+           {(provided) => (
+             <Box {...provided.droppableProps} ref={provided.innerRef} sx={{ flex: 1 }}>
+               {tasks.map((task, index) => (
