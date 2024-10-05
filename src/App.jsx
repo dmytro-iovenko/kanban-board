@@ -4,6 +4,9 @@ import KanbanBoard from "./components/KanbanBoard";
 import { Box } from "@mui/material";
 import * as JiraAPI from "./data/JiraAPI";
 
+// Define the order of columns
+const STATUS_CATEGORY_ORDER = ["To Do", "In Progress", "Done"];
+
 const App = () => {
   // const statuses = ["todo", "in-progress", "done"];
   const [statuses, setStatuses] = useState([]);
@@ -26,10 +29,21 @@ const App = () => {
       console.log("statuses:", statuses);
       setStatuses(statuses);
 
-      const groupedTasks = statuses.reduce((acc, status) => {
-        acc[status.id] = { status: status.name, tasks: initialTasks.filter((task) => task.fields.status.id === status.id) };
-        return acc;
-      }, {});
+      // group tasks into array with unique statusCategory data
+      const groupedTasks = Array.from(new Set(statuses.map((status) => status.statusCategory.id))).map((id) => {
+        const status = statuses.find((status) => status.statusCategory.id === id);
+        return {
+          id: status.statusCategory.id,
+          status: status.statusCategory.name,
+          tasks: initialTasks.filter((task) => task.fields.status.statusCategory.id === status.statusCategory.id),
+        };
+      });
+
+      // sort the status categories based on the defined order
+      groupedTasks.sort((a, b) => {
+        return STATUS_CATEGORY_ORDER.indexOf(a.status) - STATUS_CATEGORY_ORDER.indexOf(b.status);
+      });
+
       console.log("groupedTasks:", groupedTasks);
       setTasks(groupedTasks);
     })();
