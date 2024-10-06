@@ -2,7 +2,10 @@ import React, { useEffect, useState } from "react";
 // import initialTasks from "./data/initialData";
 import KanbanBoard from "./components/KanbanBoard";
 import { Box } from "@mui/material";
+import { createTheme } from '@mui/material/styles';
 import * as JiraAPI from "./data/JiraAPI";
+
+const theme = createTheme({});
 
 // Define the order of columns
 const STATUS_CATEGORY_ORDER = ["To Do", "In Progress", "Done"];
