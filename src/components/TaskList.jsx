@@ -1,18 +1,17 @@
 import React from "react";
-import { Badge, Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
+import { Box, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 import { Droppable } from "@hello-pangea/dnd";
 import TaskItem from "./TaskItem";
-import jiraPalette from "../helpers/jiraPalette";
+import * as Colors from '@mui/material/colors';
 
 export default function TaskList({ id, category, tasks, categoryColor }) {
   const color = categoryColor.split("-")[0];
-  const bgColor = jiraPalette[`${color}100`];
-  const bdColor = jiraPalette[`${color}600`];
+  const bgColor = Colors[color][100]
+  const bdColor = Colors[color][900]
 
   return (
     <Paper
       component="li"
-      // variant="outlined"
       sx={{
         border: `2px solid ${bdColor}`,
         borderRadius: 2,
